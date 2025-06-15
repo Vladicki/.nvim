@@ -4,7 +4,7 @@
 -- but helps people determine if their system is setup correctly.
 --
 --]]
-return{
+
 local check_version = function()
   local verstr = tostring(vim.version())
   if not vim.version.ge then
@@ -49,5 +49,4 @@ return {
     check_version()
     check_external_reqs()
   end,
-}
 }

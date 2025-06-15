@@ -232,10 +232,10 @@ vim.keymap.set('n', '<space>ts', function()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
   vim.api.nvim_win_set_height(0, 15)
-end, { desc = 'Open [T]erminal' })
+end, { desc = '[S]plit Terminal' })
 
 -- vim.keymap.set('n', '<leader>ru', ':w<CR>:!%:p', { desc = '[R][U]n current file' })
-vim.keymap.set('n', '<leader>tr', ':write<CR>:!chmod +x %:p && %:p<CR>', { desc = '[R]un current file' })
+vim.keymap.set('n', '<leader>tr', ':write<CR>:!chmod +x %:p && %:p<CR>', { desc = '[R]un current script' })
 vim.keymap.set('n', '<leader>x', ':!chmod +x %:p<CR>', { desc = 'Make current file e[X]ecutable' })
 
 vim.keymap.set('n', '<leader><leader>x', function()
