@@ -1,7 +1,6 @@
 --[[
 
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
+===================================================================== ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
 ========                                    .-----.          ========
 ========         .----------------------.   | === |          ========
@@ -155,6 +154,12 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
+--Changing Tab to 4 spaces Tabulation
+vim.o.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
+vim.o.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
+vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
+
 -- Show which line your cursor is on
 vim.o.cursorline = true
 
@@ -217,24 +222,48 @@ vim.api.nvim_create_autocmd('TermOpen', {
   end,
 })
 
+-- Terminals
+--
+--
+--
 -- Shortcut for a new instance of terminal <space>+ ST
-vim.keymap.set('n', '<space>st', function()
+vim.keymap.set('n', '<space>ts', function()
   vim.cmd.vnew()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
   vim.api.nvim_win_set_height(0, 15)
-end)
+end, { desc = 'Open [T]erminal' })
 
--- Chmod + x shortcut
-vim.keymap.set('n', '<space>+x', function()
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local lnum = cursor[1]
-  local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
-  line = line:gsub(' ([r%-][w%-]).([r%-][w%-]).([r%-][w%-]). ', function(u, g, p)
-    return ' ' .. u .. 'x' .. g .. 'x' .. p .. 'x '
-  end)
-  vim.api.nvim_buf_set_lines(0, lnum - 1, lnum, true, { line })
-end)
+-- vim.keymap.set('n', '<leader>ru', ':w<CR>:!%:p', { desc = '[R][U]n current file' })
+vim.keymap.set('n', '<leader>tr', ':write<CR>:!chmod +x %:p && %:p<CR>', { desc = '[R]un current file' })
+vim.keymap.set('n', '<leader>x', ':!chmod +x %:p<CR>', { desc = 'Make current file e[X]ecutable' })
+
+vim.keymap.set('n', '<leader><leader>x', function()
+  vim.cmd 'write' -- save file
+  local file = vim.fn.expand '%:p' -- full path to current file
+  vim.cmd('!chmod +x ' .. file .. ' && ' .. file)
+end, { desc = 'Make file executable and run it' })
+
+-- Alt-Tab behavior
+
+vim.keymap.set({ 'n', 'v' }, '<A-Tab>', ':tabnext<CR>', { desc = 'Next Tab' })
+
+vim.keymap.set('i', '<A-Tab>', '<Esc>:tabnext<CR>', { desc = 'Next Tab from Insert' })
+
+vim.keymap.set('t', '<A-Tab>', '<Esc><Esc>:tabnext<CR>', { desc = 'Next Tab from Terminal' })
+
+-- Set tab size to 4
+
+-- -- Chmod + x shortcut
+-- vim.keymap.set('n', '<space>x', function()
+--   local cursor = vim.api.nvim_win_get_cursor(0)
+--   local lnum = cursor[1]
+--   local line = vim.api.nvim_buf_get_lines(0, lnum - 1, lnum, true)[1]
+--   line = line:gsub(' ([r%-][w%-]).([r%-][w%-]).([r%-][w%-]). ', function(u, g, p)
+--     return ' ' .. u .. 'x' .. g .. 'x' .. p .. 'x '
+--   end)
+--   vim.api.nvim_buf_set_lines(0, lnum - 1, lnum, true, { line })
+-- end)
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -273,6 +302,7 @@ rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
+
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
@@ -373,7 +403,7 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
+        { '<leader>t', group = '[T]erminal' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -463,7 +493,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = 'Find existing [B]uffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -582,6 +612,7 @@ require('lazy').setup({
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
           map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          -- map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -647,9 +678,9 @@ require('lazy').setup({
           --
           -- This may be unwanted, since they displace some of your code
           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
+            map('<leader>h', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
+            end, 'Toggle Inlay [H]ints')
           end
         end,
       })
@@ -700,8 +731,8 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
+        gopls = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -863,7 +894,8 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        -- preset = 'default',
+        preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1006,16 +1038,16 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
+  -- require 'custom.plugin.floaterminal'
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
+  -- In normal mode type `<sp3ce>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
   ui = {
