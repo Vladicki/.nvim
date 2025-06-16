@@ -250,11 +250,11 @@ end, { desc = '[S]plit Terminal' })
 vim.keymap.set('n', '<leader>tr', ':write<CR>:!chmod +x %:p && %:p<CR>', { desc = '[R]un current script' })
 vim.keymap.set('n', '<leader>x', ':!chmod +x %:p<CR>', { desc = 'Make current file e[X]ecutable' })
 
-vim.keymap.set('n', '<leader><leader>x', function()
+vim.keymap.set('n', '<leader>r', function()
   vim.cmd 'write' -- save file
   local file = vim.fn.expand '%:p' -- full path to current file
   vim.cmd('!chmod +x ' .. file .. ' && ' .. file)
-end, { desc = 'Make file executable and run it' })
+end, { desc = 'File chmod+x and run' })
 
 -- Alt-Tab behavior
 
