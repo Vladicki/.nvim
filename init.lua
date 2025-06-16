@@ -236,10 +236,18 @@ vim.api.nvim_create_user_command('SplitToNewTab', function()
 end, {})
 
 -- Optional keybinding: <leader>ts to split to new tab
-vim.keymap.set('n', '<leader>tt', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
+vim.keymap.set('n', '<leader>t<TAB>', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
 
 -- Shortcut for a new instance of terminal <space>+ ST
 vim.keymap.set('n', '<space>ts', function()
+  vim.cmd.vnew()
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 15)
+end, { desc = '[S]mall Terminal' })
+
+-- Shortcut for a new instance of terminal <space>+ ST
+vim.keymap.set('n', '<space>tt', function()
   vim.cmd.vnew()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
@@ -592,7 +600,7 @@ require('lazy').setup({
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
       --    function will be executed to configure the current buffer
-      vim.api.nvim_create_autocmd({
+      vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
