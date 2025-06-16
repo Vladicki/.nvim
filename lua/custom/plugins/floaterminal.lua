@@ -57,7 +57,7 @@ return {
       end
 
       vim.api.nvim_create_user_command('Floaterminal', toggle_terminal, {})
-      vim.keymap.set('n', '<space>tt', toggle_terminal, { desc = 'Open Floating Terminal' })
+      vim.keymap.set('n', '<space><space>', toggle_terminal, { desc = 'Open Floating Terminal' })
     end,
   },
 }

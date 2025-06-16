@@ -225,7 +225,19 @@ vim.api.nvim_create_autocmd('TermOpen', {
 -- Terminals
 --
 --
---
+-- Create a command or keybinding to move current window to a new tab
+vim.api.nvim_create_user_command('SplitToNewTab', function()
+  local buf = vim.api.nvim_get_current_buf()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+
+  vim.cmd 'tabnew' -- Create new tab
+  vim.api.nvim_win_set_buf(0, buf) -- Set buffer in new tab
+  vim.api.nvim_win_set_cursor(0, cursor) -- Restore cursor position
+end, {})
+
+-- Optional keybinding: <leader>ts to split to new tab
+vim.keymap.set('n', '<leader>tt', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
+
 -- Shortcut for a new instance of terminal <space>+ ST
 vim.keymap.set('n', '<space>ts', function()
   vim.cmd.vnew()
