@@ -236,10 +236,18 @@ vim.api.nvim_create_user_command('SplitToNewTab', function()
 end, {})
 
 -- Optional keybinding: <leader>ts to split to new tab
-vim.keymap.set('n', '<leader>tt', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
+vim.keymap.set('n', '<leader>t<TAB>', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
 
 -- Shortcut for a new instance of terminal <space>+ ST
 vim.keymap.set('n', '<space>ts', function()
+  vim.cmd.vnew()
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 15)
+end, { desc = '[S]mall Terminal' })
+
+-- Shortcut for a new instance of terminal <space>+ ST
+vim.keymap.set('n', '<space>tt', function()
   vim.cmd.vnew()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
@@ -726,6 +734,7 @@ require('lazy').setup({
           end,
         },
       }
+
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
