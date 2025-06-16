@@ -234,31 +234,42 @@ vim.api.nvim_create_user_command('SplitToNewTab', function()
   vim.api.nvim_win_set_buf(0, buf) -- Set buffer in new tab
   vim.api.nvim_win_set_cursor(0, cursor) -- Restore cursor position
 end, {})
+---
+-- Create a command or keybinding to create terminal in a new tab
+vim.api.nvim_create_user_command('TermInNewTab', function()
+  vim.cmd 'tabnew' -- Create new tab
+  vim.cmd.term()
+  vim.cmd 'startinsert'
+  -- vim.api.nvim_win_set_buf(0, buf) -- Set buffer in new tab
+  -- vim.api.nvim_win_set_cursor(0, cursor) -- Restore cursor position
+end, {})
 
 -- Optional keybinding: <leader>ts to split to new tab
-vim.keymap.set('n', '<leader>t<TAB>', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
+vim.keymap.set('n', '<leader>t<TAB>', ':TermInNewTab<CR>', { desc = 'Opens Term in new Tab' })
+--Splits to a new tab
+vim.keymap.set('n', '<leader><TAB>', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
 
--- Shortcut for a new instance of terminal <space>+ ST
-vim.keymap.set('n', '<space>ts', function()
-  vim.cmd.vnew()
-  vim.cmd.term()
-  vim.cmd.wincmd 'J'
-  vim.api.nvim_win_set_height(0, 15)
-end, { desc = '[S]mall Terminal' })
+-- -- Shortcut for a new instance of terminal <space>+ ST
+-- vim.keymap.set('n', '<space>ts', function()
+--   vim.cmd.vnew()
+--   vim.cmd.term()
+--   vim.cmd.wincmd 'J'
+--   vim.api.nvim_win_set_height(0, 15)
+-- end, { desc = '[S]mall Terminal' })
 
 -- Shortcut for a new instance of terminal <space>+ ST
 vim.keymap.set('n', '<space>tt', function()
   vim.cmd.vnew()
   vim.cmd.term()
   vim.cmd.wincmd 'J'
-  vim.api.nvim_win_set_height(0, 15)
+  vim.api.nvim_win_set_height(0, 25)
 end, { desc = '[S]plit Terminal' })
 
--- vim.keymap.set('n', '<leader>ru', ':w<CR>:!%:p', { desc = '[R][U]n current file' })
-vim.keymap.set('n', '<leader>tr', ':write<CR>:!chmod +x %:p && %:p<CR>', { desc = '[R]un current script' })
-vim.keymap.set('n', '<leader>x', ':!chmod +x %:p<CR>', { desc = 'Make current file e[X]ecutable' })
+--
+-- Makes this file executable
+-- vim.keymap.set('n', '<leader>x', ':!chmod +x %:p<CR>', { desc = 'Make current file e[X]ecutable' })
 
-vim.keymap.set('n', '<leader>r', function()
+vim.keymap.set('n', '<leader>tr', function()
   vim.cmd 'write' -- save file
   local file = vim.fn.expand '%:p' -- full path to current file
   vim.cmd('!chmod +x ' .. file .. ' && ' .. file)
@@ -646,6 +657,9 @@ require('lazy').setup({
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
           map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
+          -- adding LSP search to SPACE
+          map('<leader>w', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open [W]orkspace Symbols')
+          map('<leader>d', require('telescope.builtin').lsp_document_symbols, 'Open [D]ocument Symbols')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -1003,6 +1017,8 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
+      -- TODO:update the status bar
+
       local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -1020,6 +1036,7 @@ require('lazy').setup({
     end,
   },
   { -- Highlight, edit, and navigate code
+    -- TODO: update a treesitter stuff
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
