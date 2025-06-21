@@ -535,6 +535,9 @@ require('lazy').setup({
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
+      -- Shortcut to yonk a file and stay at same mark as before yonking
+      vim.keymap.set('n', 'yA', 'mzggVG"+y`z', { desc = 'Yank entire file to system clipboard' })
+
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
       vim.keymap.set('n', '<leader>s/', function()
@@ -660,6 +663,9 @@ require('lazy').setup({
           -- adding LSP search to SPACE
           map('<leader>w', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open [W]orkspace Symbols')
           map('<leader>d', require('telescope.builtin').lsp_document_symbols, 'Open [D]ocument Symbols')
+
+          -- added obsidian shortcut
+          vim.keymap.set('n', '<leader>oo', ':e ~/obsidian/Welcome.md<CR>', { desc = 'Open Welcome.md in Obsidian vault' })
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -871,11 +877,23 @@ require('lazy').setup({
     },
   },
 
+  {
+    'saghen/blink.compat',
+    -- use v2.* for blink.cmp v1.*
+    version = '2.*',
+    -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
+    lazy = true,
+    -- make sure to set opts so that lazy.nvim calls blink.compat's setup
+    opts = {},
+  },
+
   { -- Autocompletion
     'saghen/blink.cmp',
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
+
+      -- { 'epwalsh/obsidian.nvim' },
       -- Snippet Engine
       {
         'L3MON4D3/LuaSnip',
@@ -894,6 +912,9 @@ require('lazy').setup({
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           -- {
+
+          'epwalsh/obsidian.nvim',
+
           --   'rafamadriz/friendly-snippets',
           --   config = function()
           --     require('luasnip.loaders.from_vscode').lazy_load()
@@ -949,9 +970,31 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        -- 'obsidian_new', 'cmp_obsidian_tags', 'markdown',
+        default = { 'obsidian_new', 'cmp_obsidian_tags', 'obsidian', 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+
+          obsidian = {
+            name = 'obsidian',
+            module = 'blink.compat.source',
+            opts = {},
+          },
+          obsidian_new = {
+            name = 'obsidian_new',
+            module = 'blink.compat.source',
+            opts = {},
+          },
+          cmp_obsidian_tags = {
+            name = 'obsidian_tags',
+            module = 'blink.compat.source',
+            opts = {},
+          },
+          -- markdown = {
+          --   name = 'RenderMarkdown',
+          --   module = 'render-markdown.integ.blink',
+          --   fallbacks = { 'lsp' },
+          -- },
         },
       },
 
@@ -970,7 +1013,32 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
+  -- {
+  --   'iamcco/markdown-preview.nvim',
+  --   cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+  --   build = 'cd app && npm install',
+  --   init = function()
+  --     vim.g.mkdp_filetypes = { 'markdown' }
+  --   end,
+  --   ft = { 'markdown' },
+  -- },
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    -- dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    --@module 'render-markdown'
+    --@type render.md.UserConfig
+    config = function()
+      require('render-markdown').setup {
+        latex = { enabled = false },
+        -- preset = 'none',
+        -- code = {
+        -- 	disable_background = {}
+        -- },
+      }
+    end,
+  },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -1008,7 +1076,7 @@ require('lazy').setup({
       require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
+      --a
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
