@@ -877,21 +877,22 @@ require('lazy').setup({
     },
   },
 
-  {
-    'saghen/blink.compat',
-    -- use v2.* for blink.cmp v1.*
-    version = '2.*',
-    -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
-    lazy = true,
-    -- make sure to set opts so that lazy.nvim calls blink.compat's setup
-    opts = {},
-  },
-
   { -- Autocompletion
     'saghen/blink.cmp',
     event = 'VimEnter',
     version = '1.*',
     dependencies = {
+      { 'apwalsh/obsidian.nvim' },
+
+      {
+        'saghen/blink.compat',
+        -- use v2.* for blink.cmp v1.*
+        version = '2.*',
+        -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
+        lazy = true,
+        -- make sure to set opts so that lazy.nvim calls blink.compat's setup
+        opts = {},
+      },
 
       -- { 'epwalsh/obsidian.nvim' },
       -- Snippet Engine
@@ -912,8 +913,6 @@ require('lazy').setup({
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           -- {
-
-          'epwalsh/obsidian.nvim',
 
           --   'rafamadriz/friendly-snippets',
           --   config = function()
@@ -966,12 +965,12 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
       },
 
       sources = {
         -- 'obsidian_new', 'cmp_obsidian_tags', 'markdown',
-        default = { 'obsidian_new', 'cmp_obsidian_tags', 'obsidian', 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'obsidian_new', 'obsidian_tags', 'markdown', 'obsidian', 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
 
@@ -985,16 +984,16 @@ require('lazy').setup({
             module = 'blink.compat.source',
             opts = {},
           },
-          cmp_obsidian_tags = {
+          obsidian_tags = {
             name = 'obsidian_tags',
             module = 'blink.compat.source',
             opts = {},
           },
-          -- markdown = {
-          --   name = 'RenderMarkdown',
-          --   module = 'render-markdown.integ.blink',
-          --   fallbacks = { 'lsp' },
-          -- },
+          markdown = {
+            name = 'RenderMarkdown',
+            module = 'render-markdown.integ.blink',
+            fallbacks = { 'lsp' },
+          },
         },
       },
 
@@ -1027,6 +1026,7 @@ require('lazy').setup({
     -- dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ensure_installed = { 'markdown', 'markdown_inline' },
     --@module 'render-markdown'
     --@type render.md.UserConfig
     config = function()
