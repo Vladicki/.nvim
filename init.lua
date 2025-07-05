@@ -607,7 +607,6 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
-      -- { 'artempyanykh/marksman' },
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
     },
@@ -806,37 +805,13 @@ require('lazy').setup({
 
         -- TS JS servers
         -- vtsls = {},
-        ts_ls = {
-          settings = {
-            typescript = {
-              format = {
-                insertSpaceAfterCommaDelimiter = true,
-                insertSpaceBeforeAndAfterBinaryOperators = true,
-                -- placeOpenBraceOnNewLineForFunctions = false,
-                -- placeOpenBraceOnNewLineForControlBlocks = false,
-                -- indentSize = 2,
-                -- convertTabsToSpaces = true,
-                -- semicolons = 'insert',
-              },
-            },
-            javascript = {
-              format = {
-                insertSpaceAfterCommaDelimiter = true,
-                insertSpaceBeforeAndAfterBinaryOperators = true,
-                -- placeOpenBraceOnNewLineForFunctions = false,
-                -- placeOpenBraceOnNewLineForControlBlocks = false,
-                -- indentSize = 2,
-                -- convertTabsToSpaces = true,
-                -- semicolons = 'insert',
-              },
-            },
-          },
-        },
+        ts_ls = {},
         html = {},
         -- emmet_ls = {
+        --   filetypes = { 'html' },
         --   on_attach = function(client, bufnr)
-        --     -- disable completion capability from emmet_ls
-        --     client.server_capabilities.completionProvider = nil
+        --     --     -- disable completion capability from emmet_ls
+        --     -- client.server_capabilities.completionProvider = nil
         --   end,
         -- },
 
@@ -971,48 +946,48 @@ require('lazy').setup({
     'saghen/blink.cmp',
     event = 'VimEnter',
     -- version = '1.*',
-    -- dependencies = {
-    -- { 'apwalsh/obsidian.nvim' },
-    {
-      'saghen/blink.compat',
-      -- use v2.* for blink.cmp v1.*
-      version = false,
-      -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
-      lazy = true,
-      -- make sure to set opts so that lazy.nvim calls blink.compat's setup
-      opts = {},
-    },
-
-    -- { 'epwalsh/obsidian.nvim' },
-    -- Snippet Engine
-    {
-      'L3MON4D3/LuaSnip',
-      version = '2.*',
-      build = (function()
-        -- Build Step is needed for regex support in snippets.
-        -- This step is not supported in many windows environments.
-        -- Remove the below condition to re-enable on windows.
-        if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-          return
-        end
-        return 'make install_jsregexp'
-      end)(),
-      dependencies = {
-        -- `friendly-snippets` contains a variety of premade snippets.
-        --    See the README about individual language/framework/plugin snippets:
-        --    https://github.com/rafamadriz/friendly-snippets
-        -- {
-
-        --   'rafamadriz/friendly-snippets',
-        --   config = function()
-        --     require('luasnip.loaders.from_vscode').lazy_load()
-        --   end,
-        -- },
+    dependencies = {
+      -- { 'apwalsh/obsidian.nvim' },
+      {
+        'saghen/blink.compat',
+        -- use v2.* for blink.cmp v1.*
+        version = false,
+        -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
+        lazy = true,
+        -- make sure to set opts so that lazy.nvim calls blink.compat's setup
+        opts = {},
       },
-      opts = {},
+
+      -- { 'epwalsh/obsidian.nvim' },
+      -- Snippet Engine
+      {
+        'L3MON4D3/LuaSnip',
+        version = '2.*',
+        build = (function()
+          -- Build Step is needed for regex support in snippets.
+          -- This step is not supported in many windows environments.
+          -- Remove the below condition to re-enable on windows.
+          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+            return
+          end
+          return 'make install_jsregexp'
+        end)(),
+        dependencies = {
+          -- `friendly-snippets` contains a variety of premade snippets.
+          --    See the README about individual language/framework/plugin snippets:
+          --    https://github.com/rafamadriz/friendly-snippets
+          -- {
+
+          --   'rafamadriz/friendly-snippets',
+          --   config = function()
+          --     require('luasnip.loaders.from_vscode').lazy_load()
+          --   end,
+          -- },
+        },
+        opts = {},
+      },
+      'folke/lazydev.nvim',
     },
-    'folke/lazydev.nvim',
-    -- },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
     opts = {
@@ -1055,9 +1030,6 @@ require('lazy').setup({
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
-      },
-      dependencies = {
-        { 'epwalsh/obsidian.nvim', 'saghen/blink.compat' },
       },
       sources = {
         -- 'obsidian_new', 'cmp_obsidian_tags', 'markdown',
