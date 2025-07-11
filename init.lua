@@ -284,7 +284,8 @@ vim.keymap.set({ 'n', 'v' }, '<A-Tab>', ':tabnext<CR>', { desc = 'Next Tab' })
 
 vim.keymap.set('i', '<A-Tab>', '<Esc>:tabnext<CR>', { desc = 'Next Tab from Insert' })
 
-vim.keymap.set('t', '<A-Tab>', '<Esc><Esc>:tabnext<CR>', { desc = 'Next Tab from Terminal' })
+vim.keymap.set('t', '<A-Tab>', [[<C-\><C-n>:tabnext<CR>]], { desc = 'Next Tab from Terminal' })
+-- im.keymap.set('t', '<A-Tab>', '<Esc><Esc>:tabnext<CR>', { desc = 'Next Tab from Terminal' })
 
 -- Set tab size to 4
 
@@ -336,6 +337,18 @@ rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
+
+-- vim.opt.termguicolors = true
+-- local ccc = require 'ccc'
+-- local mapping = ccc.mapping
+-- ccc.setup {
+--   -- Your preferred settings
+--   -- Example: enable highlighter
+--   highlighter = {
+--     auto_enable = true,
+--     lsp = true,
+--   },
+-- }
 
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
@@ -799,8 +812,13 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
 
-        tailwindcss = {},
-        cssls = {},
+        tailwindcss = {
+
+          filetypes = { 'html', 'css', 'javascriptreact', 'typescriptreact' },
+        },
+        -- cssls {
+        --   filetypes = { 'scss', 'less' }, -- omit "css"
+        -- },
         jsonls = {},
 
         -- TS JS servers
@@ -1014,7 +1032,8 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         -- preset = 'default',
-        preset = 'super-tab',
+        -- preset = 'super-tab',
+        preset = 'enter',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1076,6 +1095,30 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
+
+  {
+    'windwp/nvim-ts-autotag',
+    event = 'InsertEnter',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('nvim-ts-autotag').setup {
+        filetypes = {
+          'html',
+          'javascript',
+          'javascriptreact', -- JSX
+          'typescriptreact', -- TSX
+          'svelte',
+          'vue',
+          'xml',
+          'php',
+          'markdown',
+        },
+      }
+    end,
+  },
+
   -- {
   --   'iamcco/markdown-preview.nvim',
   --   cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
@@ -1136,7 +1179,9 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+
+      vim.cmd.colorscheme 'unokai'
+      -- vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
 
