@@ -284,7 +284,8 @@ vim.keymap.set({ 'n', 'v' }, '<A-Tab>', ':tabnext<CR>', { desc = 'Next Tab' })
 
 vim.keymap.set('i', '<A-Tab>', '<Esc>:tabnext<CR>', { desc = 'Next Tab from Insert' })
 
-vim.keymap.set('t', '<A-Tab>', '<Esc><Esc>:tabnext<CR>', { desc = 'Next Tab from Terminal' })
+vim.keymap.set('t', '<A-Tab>', [[<C-\><C-n>:tabnext<CR>]], { desc = 'Next Tab from Terminal' })
+-- vim.keymap.set('t', '<A-Tab>', '<Esc><Esc>:tabnext<CR>', { desc = 'Next Tab from Terminal' })
 
 -- Set tab size to 4
 
@@ -336,6 +337,18 @@ rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
+
+vim.opt.termguicolors = true
+local ccc = require 'ccc'
+local mapping = ccc.mapping
+ccc.setup {
+  -- Your preferred settings
+  -- Example: enable highlighter
+  highlighter = {
+    auto_enable = true,
+    lsp = true,
+  },
+}
 
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
@@ -799,8 +812,13 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
 
-        tailwindcss = {},
-        cssls = {},
+        tailwindcss = {
+
+          filetypes = { 'html', 'css', 'javascriptreact', 'typescriptreact' },
+        },
+        -- cssls {
+        --   filetypes = { 'scss', 'less' }, -- omit "css"
+        -- },
         jsonls = {},
 
         -- TS JS servers
@@ -809,9 +827,7 @@ require('lazy').setup({
         html = {},
         -- emmet_ls = {
         --   filetypes = { 'html' },
-        --   on_attach = function(client, bufnr)
-        --     --     -- disable completion capability from emmet_ls
-        --     -- client.server_capabilities.completionProvider = nil
+        --     vim.g.user_emmet_leader_key = '<C-E>',
         --   end,
         -- },
 
@@ -946,16 +962,56 @@ require('lazy').setup({
     'saghen/blink.cmp',
     event = 'VimEnter',
     -- version = '1.*',
-    dependencies = {
-      -- { 'apwalsh/obsidian.nvim' },
-      {
+
+    -- providers = {
+    --   avante_commands = {
+    --     name = 'avante_commands',
+    --     module = 'blink.compat.source',
+    --     score_offset = 90, -- show at a higher priority than lsp
+    --     opts = {},
+    --   },
+    --   avante_files = {
+    --     name = 'avante_files',
+    --     module = 'blink.compat.source',
+    --     score_offset = 100, -- show at a higher priority than lsp
+    --     opts = {},
+    --   },
+    --   avante_mentions = {
+    --     name = 'avante_mentions',
+    --     module = 'blink.compat.source',
+    --     score_offset = 1000, -- show a higher priority than lsp
+    --     opts = {},
+    --   },
+
+      dependencies = {
+        -- { 'apwalsh/obsidian.nvim' },
+        -- 'Kaiser-Yang/blink-cmp-avante',
         'saghen/blink.compat',
         -- use v2.* for blink.cmp v1.*
         version = false,
         -- lazy.nvim will automatically load the plugin when it's required by blink.cmp
         lazy = true,
         -- make sure to set opts so that lazy.nvim calls blink.compat's setup
-        opts = {},
+        opts = {
+        --   sources = {
+        --     -- Add 'avante' to the list
+        --     default = { 'avante', 'lsp', 'path', 'luasnip', 'buffer' },
+        --     providers = {
+        --       avante = {
+        --         module = 'blink-cmp-avante',
+        --         name = 'Avante',
+        --         opts = {
+        --           -- options for blink-cmp-avante
+        --         },
+        --       },
+            },
+          },
+        --   compat = {
+        --     'avante_commands',
+        --     'avante_mentions',
+        --     'avante_files',
+        --   },
+        -- },
       },
 
       -- { 'epwalsh/obsidian.nvim' },
@@ -977,7 +1033,7 @@ require('lazy').setup({
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
           -- {
-
+          --
           --   'rafamadriz/friendly-snippets',
           --   config = function()
           --     require('luasnip.loaders.from_vscode').lazy_load()
@@ -1014,7 +1070,13 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         -- preset = 'default',
-        preset = 'super-tab',
+        preset = 'enter',
+
+        -- only override <Right> to accept the current item
+        mappings = {
+          ['<Right>'] = { 'accept', 'fallback' },
+        },
+        -- preset = 'super-tab',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1076,6 +1138,30 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
+
+  {
+    'windwp/nvim-ts-autotag',
+    event = 'InsertEnter',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('nvim-ts-autotag').setup {
+        filetypes = {
+          'html',
+          'javascript',
+          'javascriptreact', -- JSX
+          'typescriptreact', -- TSX
+          'svelte',
+          'vue',
+          'xml',
+          'php',
+          'markdown',
+        },
+      }
+    end,
+  },
+
   -- {
   --   'iamcco/markdown-preview.nvim',
   --   cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
@@ -1136,7 +1222,9 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+
+      -- vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'unokai'
     end,
   },
 
@@ -1224,6 +1312,9 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'plugins.devicons',
   require 'kickstart.plugins.neo-tree',
+    --
+  -- require 'plugins.avante',
+    --
   -- require 'custom.plugin.floaterminal'
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
