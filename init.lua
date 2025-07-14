@@ -816,6 +816,7 @@ require('lazy').setup({
 
           filetypes = { 'html', 'css', 'javascriptreact', 'typescriptreact' },
         },
+
         -- cssls {
         --   filetypes = { 'scss', 'less' }, -- omit "css"
         -- },
