@@ -570,6 +570,7 @@ require('lazy').setup({
       -- Shortcut to yonk a file and stay at same mark as before yonking
       vim.keymap.set('n', 'gy', 'mzggVG"+y`z', { desc = 'Yank entire file to system clipboard' })
 
+      vim.keymap.set('n', 'gp', 'mpggVG"+p`p', { desc = 'Paste into the file from system clipboard' })
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
       vim.keymap.set('n', '<leader>s/', function()
