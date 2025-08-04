@@ -541,6 +541,9 @@ require('lazy').setup({
         },
       }
 
+      -- Python Env for Leetcode and other plugins
+      -- vim.g.python3_host_prog = vim.fn.exp//and 'leetcode/bin/python'
+      vim.g.leetcode_browser = 'firefox'
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
