@@ -501,9 +501,7 @@ require('lazy').setup({
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
-      'jonarrien/telescope-cmdline.nvim',
     },
-
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
       -- it can fuzzy find! It's more than just a "file finder", it can search
@@ -563,45 +561,14 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = 'Find existing [B]uffers' })
 
-      vim.keymap.set('n', 'Q', '<cmd>Telescope cmdline<cr>', { desc = 'Cmdline' })
-      vim.keymap.set('n', '<leader><leader>', '<cmd>Telescope cmdline<cr>', { desc = 'Cmdline' })
-
-      opts =
-        {
-          extensions = {
-            cmdline = {
-              -- Adjust telescope picker size and layout
-              picker = {
-                layout_config = {
-                  width = 120,
-                  height = 25,
-                },
-              },
-              -- Adjust your mappings
-              mappings = {
-                complete = '<Tab>',
-                run_selection = '<C-CR>',
-                run_input = '<CR>',
-              },
-              -- Triggers any shell command using overseer.nvim (`:!`)
-              overseer = {
-                enabled = true,
-              },
-            },
-          },
-        },
-  config = function(_, opts)
-    require("telescope").setup(opts)
-    require("telescope").load_extension('cmdline')
-  end,
-        -- Slightly advanced example of overriding default behavior and theme
-        vim.keymap.set('n', '<leader>/', function()
-          -- You can pass additional configuration to Telescope to change the theme, layout, etc.
-          builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-            winblend = 10,
-            previewer = false,
-          })
-        end, { desc = '[/] Fuzzily search in current buffer' })
+      -- Slightly advanced example of overriding default behavior and theme
+      vim.keymap.set('n', '<leader>/', function()
+        -- You can pass additional configuration to Telescope to change the theme, layout, etc.
+        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+          winblend = 10,
+          previewer = false,
+        })
+      end, { desc = '[/] Fuzzily search in current buffer' })
 
       -- Shortcut to yonk a file and stay at same mark as before yonking
       vim.keymap.set('n', 'gy', 'mzggVG"+y`z', { desc = 'Yank entire file to system clipboard' })
