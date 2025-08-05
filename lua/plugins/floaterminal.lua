@@ -59,7 +59,7 @@ return {
       vim.api.nvim_create_user_command('Floaterminal', toggle_terminal, {})
 
       -- TODO: TEMPERARY REMOVED IT TO TRY TELESCOPE CMDLINE
-      -- vim.keymap.set('n', '<space><space>', toggle_terminal, { desc = 'Open Floating Terminal' })
+      vim.keymap.set('n', '<leader>;', toggle_terminal, { desc = 'Open Floating Terminal' })
     end,
   },
 }
