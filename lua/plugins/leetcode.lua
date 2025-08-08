@@ -104,7 +104,12 @@ return {
     ---@type boolean
     image_support = false,
   },
-
+  -- Custom command: LeetStart
+  vim.api.nvim_create_user_command('LeetStart', function()
+    vim.cmd 'Leet'
+    vim.cmd.colorscheme 'tokyonight'
+    vim.cmd 'LspStop'
+  end, {}),
   -- Put this anywhere in your config or plugin setup
   vim.keymap.set('n', "<C-'>", ':Leet run<CR>', { desc = 'Leet Run' }),
   vim.keymap.set('n', '<C-CR>', ':Leet submit<CR>', { desc = 'Leet Submit' }),
