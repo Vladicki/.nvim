@@ -151,8 +151,9 @@ vim.o.splitbelow = true
 --  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.o.list = false
+vim.opt.listchars = { trail = '·', nbsp = '␣' }
+-- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -1198,6 +1199,7 @@ require('lazy').setup({
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    lazy = false,
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -1231,6 +1233,67 @@ require('lazy').setup({
         return '%2l:%-2v'
       end
 
+      require('mini.sessions').setup {
+        -- Path to store sessions. By default, it's `vim.fn.stdpath('data') .. '/sessions'`.
+        -- You can keep the default or specify a custom path.
+        -- dir = vim.fn.stdpath('data') .. '/sessions',
+
+        -- Hook to run after a session is loaded
+        autowrite = true,
+        file = 'Session.vim',
+
+        -- Whether to print session path after action
+        verbose = { read = false, write = true, delete = true },
+
+        post_load = function()
+          -- For example, ensure no-file buffers are closed
+          -- or other post-load actions you might want.
+          -- vim.cmd('bufdo! silent! checktime') -- Optional: check file modifications
+        end,
+
+        -- Hook to run before a session is saved
+        pre_save = function()
+          -- For example, ensure any temporary buffers are not saved
+          -- or perform other pre-save cleanup.
+        end,
+
+        -- A function that returns a list of buffers to ignore
+        -- This helps in not saving unwanted buffers in sessions (e.g., Telescope, Lazy)
+        filter = function(bufnr)
+          local buf_name = vim.api.nvim_buf_get_name(bufnr)
+          local ft = vim.bo[bufnr].filetype
+          return ft ~= 'lazy' and ft ~= 'TelescopePrompt' and ft ~= 'Trouble' and ft ~= 'qf' and buf_name ~= ''
+        end,
+
+        -- Mapping for `MiniSessions.Setup()` to save the current session
+        -- and `MiniSessions.Load()` to load a session.
+        -- These are internal functions; you'll typically interact via keymaps
+        -- or commands that call these. `snacks.nvim` provides a dashboard keymap
+        -- for 'session', which should use these under the hood.
+      }
+      -- You might also want to set up keymaps for Mini.sessions directly
+      -- if you want to save/load sessions outside of the snacks.nvim dashboard.
+      vim.keymap.set('n', '<leader>Ss', function()
+        local sessions = require 'mini.sessions'
+        local ok, _ = pcall(sessions.write)
+        if not ok then
+          local dir_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+          if dir_name and dir_name ~= '' then
+            sessions.write(dir_name)
+            vim.notify("Session saved as '" .. dir_name .. "'.")
+          else
+            vim.notify('Could not determine session name from directory.', vim.log.levels.ERROR)
+          end
+        else
+          vim.notify 'Active session updated.'
+        end
+      end, { desc = 'Save Session' })
+      vim.keymap.set('n', '<leader>Sl', function()
+        require('mini.sessions').read()
+      end, { desc = 'Load Session' })
+      vim.keymap.set('n', '<leader>Sc', function()
+        require('mini.sessions').delete()
+      end, { desc = 'Delete Session' })
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
