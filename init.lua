@@ -709,10 +709,10 @@ require('lazy').setup({
           map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
           -- adding LSP search to SPACE
           map('<leader>w', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open [W]orkspace Symbols')
-          map('<leader>d', require('telescope.builtin').lsp_document_symbols, 'Open [D]ocument Symbols')
+          map('<leader>D', require('telescope.builtin').lsp_document_symbols, 'Open [D]ocument Symbols')
 
-          -- added obsidian shortcut
-          vim.keymap.set('n', '<leader>oo', ':e ~/obsidian/Welcome.md<CR>', { desc = 'Open Welcome.md in Obsidian vault' })
+          --TODO: add obsidian /md reader
+          -- vim.keymap.set('n', '<leader>oo', ':e ~/obsidian/Welcome.md<CR>', { desc = 'Open Welcome.md in Obsidian vault' })
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -1407,7 +1407,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',

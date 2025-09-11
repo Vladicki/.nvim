@@ -55,14 +55,14 @@ return {
       desc = 'Debug: Step Out',
     },
     {
-      '<leader>b',
+      '<leader>db',
       function()
         require('dap').toggle_breakpoint()
       end,
       desc = 'Debug: Toggle Breakpoint',
     },
     {
-      '<leader>B',
+      '<leader>dB',
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
@@ -75,6 +75,42 @@ return {
         require('dapui').toggle()
       end,
       desc = 'Debug: See last session result.',
+    },
+    {
+      '<leader>du',
+      function()
+        require('dapui').toggle()
+      end,
+      desc = 'Debug: See last session result.',
+    },
+    {
+      '<leader>ds',
+      function()
+        local widgets = require 'dap.ui.widgets'
+        local sidebar = widgets.sidebar(widgets.scopes)
+        sidebar.open()
+      end,
+      desc = 'Open debugging sidebar',
+    },
+
+    -- DAP Go keymaps
+    {
+      '<leader>d',
+      name = 'Debug', -- this sets the group name
+    },
+    {
+      '<leader>dt',
+      function()
+        require('dap-go').debug_test()
+      end,
+      desc = 'Debug go test',
+    },
+    {
+      '<leader>dl',
+      function()
+        require('dap-go').debug_last()
+      end,
+      desc = 'Debug last go test',
     },
   },
   config = function()
