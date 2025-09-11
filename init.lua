@@ -806,6 +806,14 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
+      require('blink.cmp').setup {
+        completion = {
+          accept = {
+            mode = 'replace',
+          },
+        },
+      }
+
       local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       -- Enable the following language servers
@@ -844,12 +852,14 @@ require('lazy').setup({
 
         delve = {},
         gopls = {
-          -- cmd = { '' },
-          -- filetypes = { 'go', 'gomod', 'gowork', 'gotml' },
-          -- capabilities = capabilities,
-          -- root_dir = util.root_patern('go.work', 'go.mod', 'git'),
+          filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+          -- root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
           settings = {
-            completeUnimported = true,
+            gopls = {
+              usePlaceholders = true,
+              completeUnimported = true,
+              staticcheck = true,
+            },
           },
         },
         pyright = {},
@@ -935,6 +945,7 @@ require('lazy').setup({
     keys = {
       {
         '<leader>f',
+
         function()
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
@@ -960,6 +971,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports', 'gofumpt', 'golines' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1003,13 +1015,18 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
+          {
 
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_lua').load { paths = '~/.config/nvim/snippets/' }
+              require('luasnip.loaders.from_vscode').lazy_load()
+              --NOTE: will exclude all javascript snippets
+              -- require("luasnip.loaders.from_vscode").load {
+              --     exclude = { "javascript" },
+              -- }
+            end,
+          },
         },
         opts = {},
       },
@@ -1043,6 +1060,8 @@ require('lazy').setup({
         -- preset = 'default',
         -- preset = 'super-tab',
         preset = 'enter',
+        ['<C-j>'] = { 'select_next', 'fallback' },
+        ['<C-k>'] = { 'select_prev', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1221,18 +1240,72 @@ require('lazy').setup({
       --  and try some other statusline plugin
       -- TODO:update the status bar
 
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      --TODO:STATUSLINE
+      -- local statusline = require 'mini.statusline'
+      -- -- set use_icons to true if you have a Nerd Font
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- -- You can configure sections in the statusline by overriding their
+      -- -- default behavior. For example, here we set the section for
+      -- -- cursor location to LINE:COLUMN
+      -- ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
 
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
-
+      require('lualine').setup {
+        options = {
+          icons_enabled = true,
+          theme = 'gruvbox_dark',
+          component_separators = { left = '', right = '' },
+          section_separators = { left = '', right = '' },
+          disabled_filetypes = {
+            statusline = {},
+            winbar = {},
+          },
+          ignore_focus = {},
+          always_divide_middle = true,
+          always_show_tabline = true,
+          globalstatus = false,
+          refresh = {
+            statusline = 1000,
+            tabline = 1000,
+            winbar = 1000,
+            refresh_time = 16, -- ~60fps
+            events = {
+              'WinEnter',
+              'BufEnter',
+              'BufWritePost',
+              'SessionLoadPost',
+              'FileChangedShellPost',
+              'VimResized',
+              'Filetype',
+              'CursorMoved',
+              'CursorMovedI',
+              'ModeChanged',
+            },
+          },
+        },
+        sections = {
+          lualine_a = { 'mode' },
+          lualine_b = { 'branch', 'diff', 'diagnostics' },
+          lualine_c = { 'filename' },
+          lualine_x = { 'encoding', 'fileformat', 'filetype' },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' },
+        },
+        inactive_sections = {
+          lualine_a = {},
+          lualine_b = {},
+          lualine_c = { 'filename' },
+          lualine_x = { 'location' },
+          lualine_y = {},
+          lualine_z = {},
+        },
+        tabline = {},
+        winbar = {},
+        inactive_winbar = {},
+        extensions = {},
+      }
       require('mini.sessions').setup {
         -- Path to store sessions. By default, it's `vim.fn.stdpath('data') .. '/sessions'`.
         -- You can keep the default or specify a custom path.
@@ -1335,7 +1408,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'plugins.devicons',
