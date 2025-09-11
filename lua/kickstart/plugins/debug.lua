@@ -95,10 +95,6 @@ return {
 
     -- DAP Go keymaps
     {
-      '<leader>d',
-      name = 'Debug', -- this sets the group name
-    },
-    {
       '<leader>dt',
       function()
         require('dap-go').debug_test()
