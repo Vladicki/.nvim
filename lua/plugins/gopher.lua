@@ -50,6 +50,9 @@ return {
 
       -- GoImpl: open command with :GoImpl ready for typing
       vim.keymap.set('n', '<leader>gi', ':GoImpl ', { desc = 'Go: Implement interface', silent = false })
+
+      -- Run Go app
+      vim.keymap.set('n', '<leader>gr', ':!go run .<CR>', { desc = 'Go: Run current module', silent = true })
     end,
   },
 }
