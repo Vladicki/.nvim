@@ -1,3 +1,4 @@
+-- _ + _ folder tree
 return {
   'stevearc/oil.nvim',
   dependencies = { 'nvim-tree/nvim-web-devicons' },

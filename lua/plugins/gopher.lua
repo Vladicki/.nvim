@@ -30,8 +30,27 @@ return {
         return
       end
 
+      local function go_if_err_custom()
+        -- move to end of line and open a new line below (like `o`)
+        vim.cmd 'normal! $'
+
+        -- text to insert
+        local lines = {
+          'if err != nil {',
+          '\treturn err',
+          '}',
+        }
+
+        -- insert lines
+        vim.api.nvim_put(lines, 'l', true, true)
+
+        -- move cursor to end of `err`
+        vim.cmd 'normal! 2k$'
+      end
+
       -- GoIfErr: insert if err != nil checks
-      vim.keymap.set('n', '<leader>ge', '<cmd>GoIfErr<CR>', { desc = ': Insert if err != nil' })
+      -- vim.keymap.set('n', '<leader>ge', '<cmd>GoIfErr<CR>', { desc = ': Insert if err != nil' })
+      vim.keymap.set('n', '<leader>ge', go_if_err_custom, { desc = 'Go: Insert if err != nil (custom)' })
 
       -- GoTestsAll: generate tests for all functions/methods in the current file
       vim.keymap.set('n', '<leader>gt', '<cmd>GoTestsAll<CR>', { desc = 'Go: Generate all tests' })

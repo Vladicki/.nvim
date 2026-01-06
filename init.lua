@@ -256,6 +256,12 @@ vim.keymap.set('n', '<leader>t<TAB>', ':TermInNewTab<CR>', { desc = 'Opens Term 
 --Splits to a new tab
 vim.keymap.set('n', '<leader><TAB>', ':SplitToNewTab<CR>', { desc = 'Split to new tab' })
 
+-- Shortcut to save + run go projects
+vim.keymap.set('n', '<leader><leader>', function()
+  vim.cmd 'wa'
+  vim.cmd '!go run .'
+end, { desc = 'Go: run project' })
+
 -- -- Shortcut for a new instance of terminal <space>+ ST
 -- vim.keymap.set('n', '<space>ts', function()
 --   vim.cmd.vnew()
@@ -850,7 +856,11 @@ require('lazy').setup({
         --     -- client.server_capabilities.completionProvider = nil
         --   end,
         -- },
-
+        --
+        -- clangd = { filetypes = { 'cpp' } },
+        -- cpptools = { filetypes = { 'cpp' } },
+        -- cpplint = { filetypes = { 'cpp' } },
+        --
         delve = {},
         gopls = {
           filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
@@ -1209,8 +1219,14 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
 
-      vim.cmd.colorscheme 'unokai'
+      -- NOTE: Brownish - colorscheme
+      -- vim.cmd.colorscheme 'unokai'
+      -- elflord - crazy black high contrast
+      -- torte - nice
+      -- deffalt -
       -- vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'zaibatsu'
+      vim.cmd.colorscheme 'lunaperche'
     end,
   },
 
@@ -1242,71 +1258,71 @@ require('lazy').setup({
       -- TODO:update the status bar
 
       --TODO:STATUSLINE
-      -- local statusline = require 'mini.statusline'
-      -- -- set use_icons to true if you have a Nerd Font
-      -- statusline.setup { use_icons = vim.g.have_nerd_font }
-      -- -- You can configure sections in the statusline by overriding their
-      -- -- default behavior. For example, here we set the section for
-      -- -- cursor location to LINE:COLUMN
-      -- ---@diagnostic disable-next-line: duplicate-set-field
-      -- statusline.section_location = function()
-      --   return '%2l:%-2v'
-      -- end
+      local statusline = require 'mini.statusline'
+      -- set use_icons to true if you have a Nerd Font
+      statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- You can configure sections in the statusline by overriding their
+      -- default behavior. For example, here we set the section for
+      -- cursor location to LINE:COLUMN
+      ---@diagnostic disable-next-line: duplicate-set-field
+      statusline.section_location = function()
+        return '%2l:%-2v'
+      end
 
-      require('lualine').setup {
-        options = {
-          icons_enabled = true,
-          theme = 'gruvbox_dark',
-          component_separators = { left = '', right = '' },
-          section_separators = { left = '', right = '' },
-          disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-          },
-          ignore_focus = {},
-          always_divide_middle = true,
-          always_show_tabline = true,
-          globalstatus = false,
-          refresh = {
-            statusline = 1000,
-            tabline = 1000,
-            winbar = 1000,
-            refresh_time = 16, -- ~60fps
-            events = {
-              'WinEnter',
-              'BufEnter',
-              'BufWritePost',
-              'SessionLoadPost',
-              'FileChangedShellPost',
-              'VimResized',
-              'Filetype',
-              'CursorMoved',
-              'CursorMovedI',
-              'ModeChanged',
-            },
-          },
-        },
-        sections = {
-          lualine_a = { 'mode' },
-          lualine_b = { 'branch', 'diff', 'diagnostics' },
-          lualine_c = { 'filename' },
-          lualine_x = { 'encoding', 'fileformat', 'filetype' },
-          lualine_y = { 'progress' },
-          lualine_z = { 'location' },
-        },
-        inactive_sections = {
-          lualine_a = {},
-          lualine_b = {},
-          lualine_c = { 'filename' },
-          lualine_x = { 'location' },
-          lualine_y = {},
-          lualine_z = {},
-        },
-        tabline = {},
-        winbar = {},
-        inactive_winbar = {},
-        extensions = {},
-      }
+      -- require('lualine').setup {
+      --   options = {
+      --     icons_enabled = true,
+      --     theme = 'gruvbox_dark',
+      --     component_separators = { left = '', right = '' },
+      --     section_separators = { left = '', right = '' },
+      --     disabled_filetypes = {
+      --       statusline = {},
+      --       winbar = {},
+      --     },
+      --     ignore_focus = {},
+      --     always_divide_middle = true,
+      --     always_show_tabline = true,
+      --     globalstatus = false,
+      --     refresh = {
+      --       statusline = 1000,
+      --       tabline = 1000,
+      --       winbar = 1000,
+      --       refresh_time = 16, -- ~60fps
+      --       events = {
+      --         'WinEnter',
+      --         'BufEnter',
+      --         'BufWritePost',
+      --         'SessionLoadPost',
+      --         'FileChangedShellPost',
+      --         'VimResized',
+      --         'Filetype',
+      --         'CursorMoved',
+      --         'CursorMovedI',
+      --         'ModeChanged',
+      --       },
+      --     },
+      --   },
+      --   sections = {
+      --     lualine_a = { 'mode' },
+      --     lualine_b = { 'branch', 'diff', 'diagnostics' },
+      --     lualine_c = { 'filename' },
+      --     lualine_x = { 'encoding', 'fileformat', 'filetype' },
+      --     lualine_y = { 'progress' },
+      --     lualine_z = { 'location' },
+      --   },
+      --   inactive_sections = {
+      --     lualine_a = {},
+      --     lualine_b = {},
+      --     lualine_c = { 'filename' },
+      --     lualine_x = { 'location' },
+      --     lualine_y = {},
+      --     lualine_z = {},
+      --   },
+      --   tabline = {},
+      --   winbar = {},
+      --   inactive_winbar = {},
+      --   extensions = {},
+      -- }
       require('mini.sessions').setup {
         -- Path to store sessions. By default, it's `vim.fn.stdpath('data') .. '/sessions'`.
         -- You can keep the default or specify a custom path.
