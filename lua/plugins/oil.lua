@@ -34,5 +34,27 @@ return {
 
     -- Open parent directory in floating window
     vim.keymap.set('n', '<space>-', require('oil').toggle_float)
+
+    -- Yank path of current file, or the entry under cursor when in oil
+    vim.keymap.set('n', '<leader>y', function()
+      local oil = require 'oil'
+      local path
+      if vim.bo.filetype == 'oil' then
+        local entry = oil.get_cursor_entry()
+        local dir = oil.get_current_dir()
+        if entry and dir then
+          path = dir .. entry.name
+        end
+      else
+        path = vim.fn.expand '%:p'
+      end
+
+      if path and path ~= '' then
+        vim.fn.setreg('+', path)
+        vim.notify('Yanked: ' .. path)
+      else
+        vim.notify('No file path to yank', vim.log.levels.WARN)
+      end
+    end, { desc = '[Y]ank file path' })
   end,
 }

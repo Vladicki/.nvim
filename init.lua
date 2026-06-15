@@ -158,11 +158,14 @@ vim.opt.listchars = { trail = '·', nbsp = '␣' }
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
---Changing Tab to 4 spaces Tabulation
-vim.o.tabstop = 4 -- A TAB character looks like 4 spaces
+-- Indentation (matches omarchy/LazyVim: 2-space, smart, treesitter-aware)
+vim.o.tabstop = 2 -- A TAB character looks like 2 spaces
 vim.o.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
-vim.o.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
-vim.o.shiftwidth = 4 -- Number of spaces inserted when indenting
+vim.o.softtabstop = 2 -- Number of spaces inserted instead of a TAB character
+vim.o.shiftwidth = 2 -- Number of spaces inserted when indenting
+vim.o.smartindent = true -- Syntax-aware auto-indent (fallback when no treesitter indents query)
+vim.o.autoindent = true -- Copy indent from the current line when starting a new line
+vim.o.shiftround = true -- Round indent to a multiple of shiftwidth with < and >
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
@@ -997,6 +1000,7 @@ require('lazy').setup({
     event = 'VimEnter',
     -- version = '1.*',
     dependencies = {
+      'saghen/blink.lib',
       -- { 'apwalsh/obsidian.nvim' },
       {
         'saghen/blink.compat',
@@ -1226,7 +1230,7 @@ require('lazy').setup({
       -- deffalt -
       -- vim.cmd.colorscheme 'tokyonight-night'
       -- vim.cmd.colorscheme 'zaibatsu'
-      vim.cmd.colorscheme 'lunaperche'
+      -- vim.cmd.colorscheme 'lunaperche' -- controlled by omarchy-theme.lua
     end,
   },
 
@@ -1257,17 +1261,11 @@ require('lazy').setup({
       --  and try some other statusline plugin
       -- TODO:update the status bar
 
-      --TODO:STATUSLINE
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      -- statusline handled by lualine (lua/plugins/lualine.lua)
+      -- local statusline = require 'mini.statusline'
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
+      -- ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function() return '%2l:%-2v' end
 
       -- require('lualine').setup {
       --   options = {
@@ -1389,30 +1387,63 @@ require('lazy').setup({
     end,
   },
   { -- Highlight, edit, and navigate code
-    -- TODO: update a treesitter stuff
     'nvim-treesitter/nvim-treesitter',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
+    lazy = false,
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'javascript',
+        'typescript',
+        'tsx',
+        'python',
+        'json',
+        'yaml',
+        'go',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<C-space>',
+          node_incremental = '<C-space>',
+          scope_incremental = false,
+          node_decremental = '<bs>',
+        },
+      },
+      textobjects = {
+        move = {
+          enable = true,
+          goto_next_start = { [']f'] = '@function.outer', [']c'] = '@class.outer', [']a'] = '@parameter.inner' },
+          goto_next_end = { [']F'] = '@function.outer', [']C'] = '@class.outer', [']A'] = '@parameter.inner' },
+          goto_previous_start = { ['[f'] = '@function.outer', ['[c'] = '@class.outer', ['[a'] = '@parameter.inner' },
+          goto_previous_end = { ['[F'] = '@function.outer', ['[C'] = '@class.outer', ['[A'] = '@parameter.inner' },
+        },
+      },
     },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    config = function(_, opts)
+      require('nvim-treesitter.config').setup(opts)
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the

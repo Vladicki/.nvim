@@ -1,16 +1,4 @@
 return {
-  { -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help ibl`
-    main = 'ibl',
-    opts = {
-      scope = {
-        enabled = true,
-        highlight = { 'IblScope' }, -- highlight for the *current* scope
-        show_start = true,
-        show_end = true,
-      },
-    },
-  },
+  -- indent guides are now provided by snacks.nvim (lua/plugins/snack.lua)
+  { 'lukas-reineke/indent-blankline.nvim', enabled = false },
 }

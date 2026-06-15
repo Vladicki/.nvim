@@ -17,9 +17,7 @@ return {
     ft = 'go',
     -- branch = "develop"
     -- (optional) will update plugin's deps on every update
-    build = function()
-      vim.cmd.GoInstallDeps()
-    end,
+    build = ":GoInstallDeps",
     ---@module "gopher"
     ---@type gopher.Config
     opts = {},
